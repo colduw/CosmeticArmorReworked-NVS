@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosArmor> {
 
@@ -51,7 +51,7 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
                 InventoryCosArmor inv = ModObjects.invMan.getCosArmorInventoryClient(minecraft.player.getUUID());
                 inv.setSkinArmor(j, !inv.isSkinArmor(j));
                 ((GuiCosArmorToggleButton) button).state = inv.isSkinArmor(j) ? 1 : 0;
-                PacketDistributor.sendToServer(new PayloadSetSkinArmor(j, inv.isSkinArmor(j)));
+                ClientPacketDistributor.sendToServer(new PayloadSetSkinArmor(j, inv.isSkinArmor(j)));
             }));
         }
     }
