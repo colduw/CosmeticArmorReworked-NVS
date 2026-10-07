@@ -10,11 +10,13 @@ import lain.mods.cos.impl.network.payload.PayloadSyncCosArmor;
 import lain.mods.cos.impl.network.payload.PayloadSyncHiddenFlags;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,6 +24,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -148,7 +153,7 @@ public class InventoryManager {
 
     private void handlePlayerDrops(LivingDropsEvent event) {
         if (event.getEntity() instanceof Player) {
-            if (event.getEntity().isEffectiveAi() && !((ServerLevel) event.getEntity().getCommandSenderWorld()).getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ModConfigs.CosArmorKeepThroughDeath.get()) {
+            if (event.getEntity().isEffectiveAi() && !((ServerLevel) event.getEntity().level()).getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ModConfigs.CosArmorKeepThroughDeath.get()) {
                 InventoryCosArmor inv = getCosArmorInventory(event.getEntity().getUUID());
                 if (NeoForge.EVENT_BUS.post(new CosArmorDeathDrops((Player) event.getEntity(), inv)).isCanceled())
                     return;
@@ -161,7 +166,7 @@ public class InventoryManager {
                     float fY = RANDOM.nextFloat() * 0.75F;
                     float fZ = RANDOM.nextFloat() * 0.75F + 0.125F;
                     while (!stack.isEmpty()) {
-                        ItemEntity entity = new ItemEntity(event.getEntity().getCommandSenderWorld(), event.getEntity().getX() + (double) fX, event.getEntity().getY() + (double) fY, event.getEntity().getZ() + (double) fZ, stack.split(RANDOM.nextInt(21) + 10));
+                        ItemEntity entity = new ItemEntity(event.getEntity().level(), event.getEntity().getX() + (double) fX, event.getEntity().getY() + (double) fY, event.getEntity().getZ() + (double) fZ, stack.split(RANDOM.nextInt(21) + 10));
                         entity.setDeltaMovement(RANDOM.nextGaussian() * (double) 0.05F, RANDOM.nextGaussian() * (double) 0.05F + (double) 0.2F, RANDOM.nextGaussian() * (double) 0.05F);
                         event.getDrops().add(entity);
                     }
@@ -261,12 +266,19 @@ public class InventoryManager {
     }
 
     protected void loadInventory(UUID uuid, InventoryCosArmor inventory) {
-        if (inventory == Dummy)
+        if (inventory == Dummy) {
             return;
+        }
+
         try {
             File file;
-            if ((file = getDataFile(uuid)).exists())
-                inventory.deserializeNBT(ServerLifecycleHooks.getCurrentServer().registryAccess(), NbtIo.read(file.toPath()));
+            if ((file = getDataFile(uuid)).exists()) {
+                CompoundTag fileData = NbtIo.read(file.toPath());
+
+                ValueInput cosData = TagValueInput.create(ProblemReporter.DISCARDING, ServerLifecycleHooks.getCurrentServer().registryAccess(), fileData);
+
+                inventory.deserialize(cosData);
+            }
         } catch (Throwable t) {
             ModObjects.logger.fatal("Failed to load CosmeticArmor data", t);
         }
@@ -302,10 +314,15 @@ public class InventoryManager {
     }
 
     protected void saveInventory(UUID uuid, InventoryCosArmor inventory) {
-        if (inventory == Dummy)
+        if (inventory == Dummy) {
             return;
+        }
         try {
-            NbtIo.write(inventory.serializeNBT(ServerLifecycleHooks.getCurrentServer().registryAccess()), getDataFile(uuid).toPath());
+            TagValueOutput cosData = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, ServerLifecycleHooks.getCurrentServer().registryAccess());
+
+            inventory.serialize(cosData);
+
+            NbtIo.write(cosData.buildResult(), getDataFile(uuid).toPath());
         } catch (Throwable t) {
             ModObjects.logger.fatal("Failed to save CosmeticArmor data", t);
         }

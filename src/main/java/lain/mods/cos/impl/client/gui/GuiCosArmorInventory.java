@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.CraftingRecipeBookComponent;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -74,7 +74,7 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
-        effects.render(graphics, mouseX, mouseY, partialTicks);
+        effects.renderEffects(graphics, mouseX, mouseY);
         oldMouseX = (float) mouseX;
         oldMouseY = (float) mouseY;
     }
@@ -93,7 +93,7 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         int i = leftPos;
         int j = topPos;
-        graphics.blit(RenderType::guiTextured, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
         if (useMousePos) {
             oldMouseX = (float) mouseX;
             oldMouseY = (float) mouseY;

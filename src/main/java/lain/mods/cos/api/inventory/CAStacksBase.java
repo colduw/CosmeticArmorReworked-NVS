@@ -1,9 +1,9 @@
 package lain.mods.cos.api.inventory;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueOutput.ValueOutputList;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.*;
@@ -39,22 +39,23 @@ public class CAStacksBase extends ItemStackHandler {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+    public void deserialize(ValueInput nbt) {
         setSize(nbt.getInt("Size").orElse(stacks.size()));
-        nbt.getList("Items").ifPresent(tagList -> {
-            for (int i = 0; i < tagList.size(); i++) {
-                tagList.getCompound(i).ifPresent(itemTags -> {
-                    itemTags.getInt("Slot").ifPresent(slot -> {
-                        if (slot >= 0 && slot < stacks.size()) {
-                            if (itemTags.contains("id"))
-                                ItemStack.parse(provider, itemTags).ifPresent(stack -> stacks.set(slot, stack));
-                            itemTags.getBoolean("isSkinArmor").ifPresent(b -> isSkinArmor[slot] = b);
-                        }
-                    });
+
+        nbt.childrenList("Items").ifPresent(tagList -> {
+            for (ValueInput itemTags : tagList) {
+                itemTags.getInt("Slot").ifPresent(slot -> {
+                    if (slot >= 0 && slot < stacks.size()) {
+                        itemTags.read("cosmeticArmorStack", ItemStack.CODEC).ifPresent(stack -> stacks.set(slot, stack));
+                        
+                        isSkinArmor[slot] = itemTags.getBooleanOr("isSkinArmor", false);
+                    }
                 });
             }
         });
+
         hidden.clear();
+
         nbt.getString("Hidden").ifPresent(h -> {
             Arrays.stream(h.split("\0")).forEach(str -> {
                 int i = str.indexOf(":");
@@ -62,6 +63,7 @@ public class CAStacksBase extends ItemStackHandler {
                     hidden.computeIfAbsent(str.substring(0, i), key -> new HashSet<>()).add(str.substring(i + 1));
             });
         });
+
         onLoad();
     }
 
@@ -93,25 +95,28 @@ public class CAStacksBase extends ItemStackHandler {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        ListTag nbtTagList = new ListTag();
+    public void serialize(ValueOutput provider) {
+        ValueOutputList itemList = provider.childrenList("Items");
+        
         for (int i = 0; i < stacks.size(); i++) {
             if (!stacks.get(i).isEmpty() || isSkinArmor[i]) {
-                CompoundTag itemTag = new CompoundTag();
+                ValueOutput itemTag = itemList.addChild();
                 itemTag.putInt("Slot", i);
-                if (!stacks.get(i).isEmpty())
-                    itemTag = (CompoundTag) stacks.get(i).save(provider, itemTag);
-                if (isSkinArmor[i])
+
+                if (!stacks.get(i).isEmpty()) {
+                    itemTag.store("cosmeticArmorStack", ItemStack.CODEC, stacks.get(i));
+                }
+                    
+                if (isSkinArmor[i]) {
                     itemTag.putBoolean("isSkinArmor", true);
-                nbtTagList.add(itemTag);
+                }
             }
         }
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Items", nbtTagList);
-        nbt.putInt("Size", stacks.size());
+
+        provider.putInt("Size", stacks.size());
+
         // writeUTF limit = a 16-bit unsigned integer = 65535 - Should be enough
-        nbt.putString("Hidden", hidden.entrySet().stream().map(entry -> entry.getValue().stream().map(value -> entry.getKey() + ":" + value).collect(Collectors.joining("\0"))).collect(Collectors.joining("\0")));
-        return nbt;
+        provider.putString("Hidden", hidden.entrySet().stream().map(entry -> entry.getValue().stream().map(value -> entry.getKey() + ":" + value).collect(Collectors.joining("\0"))).collect(Collectors.joining("\0")));
     }
 
     /**
