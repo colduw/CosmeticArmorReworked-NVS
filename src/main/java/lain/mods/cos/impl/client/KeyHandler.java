@@ -21,7 +21,7 @@ public enum KeyHandler {
         Minecraft mc = Minecraft.getInstance();
         if (!mc.isWindowActive())
             return;
-        if (keyOpenCosArmorInventory.consumeClick() && !(mc.screen instanceof GuiCosArmorInventory))
+        if (keyOpenCosArmorInventory.consumeClick() && !(mc.gui.screen() instanceof GuiCosArmorInventory))
             ClientPacketDistributor.sendToServer(new PayloadOpenCosArmorInventory());
     }
 

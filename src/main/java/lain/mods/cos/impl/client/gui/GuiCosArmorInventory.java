@@ -115,10 +115,10 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
 
     private void smoothTransition() {
         Minecraft mc = Minecraft.getInstance(); // "minecraft" is null before init(), so get one for now.
-        if (mc.screen instanceof InventoryScreen) {
-            oldMouseX = InventoryScreenAccess.getXMouse((InventoryScreen) mc.screen);
-            oldMouseY = InventoryScreenAccess.getYMouse((InventoryScreen) mc.screen);
-        } else if (mc.screen instanceof CreativeModeInventoryScreen) {
+        if (mc.gui.screen() instanceof InventoryScreen) {
+            oldMouseX = InventoryScreenAccess.getXMouse((InventoryScreen) mc.gui.screen());
+            oldMouseY = InventoryScreenAccess.getYMouse((InventoryScreen) mc.gui.screen());
+        } else if (mc.gui.screen() instanceof CreativeModeInventoryScreen) {
             useMousePos = true;
         }
     }
