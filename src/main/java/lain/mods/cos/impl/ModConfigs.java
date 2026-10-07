@@ -55,7 +55,7 @@ public class ModConfigs {
                 pop();
             }
         }.build());
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, new ModConfigSpec.Builder() {
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.LOCAL, new ModConfigSpec.Builder() {
             {
                 comment("These settings affects both server and client").push("Common");
                 CosArmorKeepThroughDeath = comment("Whether or not to keep items in cosmetic armor slots in the event of player death")

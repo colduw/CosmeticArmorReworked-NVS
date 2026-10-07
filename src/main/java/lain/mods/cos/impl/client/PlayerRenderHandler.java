@@ -53,7 +53,7 @@ public enum PlayerRenderHandler {
             if (invCosArmor.isSkinArmor(i))
                 PlayerInventoryHelper.getPlayerEquipmentSlotIndex(SLOTS[i]).ifPresent(index -> invPlayer.setItem(index, ItemStack.EMPTY));
             else {
-                ItemStack stack = invCosArmor.getStackInSlot(i);
+                ItemStack stack = invCosArmor.getItem(i);
                 if (!stack.isEmpty())
                     PlayerInventoryHelper.getPlayerEquipmentSlotIndex(SLOTS[i]).ifPresent(index -> invPlayer.setItem(index, stack));
             }

@@ -26,8 +26,9 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public void clearContent() {
-        for (int i = 0; i < getSlots(); i++)
-            setStackInSlot(i, ItemStack.EMPTY);
+        for (int i = 0; i < getContainerSize(); i++) {
+            setItem(i, ItemStack.EMPTY);
+        }
     }
 
     @Override
@@ -41,7 +42,13 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public ItemStack removeItem(int slot, int num) {
-        return extractItem(slot, num, false);
+        ItemStack stack = getItem(slot);
+
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        return stack.split(num);
     }
 
     @Override
@@ -56,7 +63,7 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public int getContainerSize() {
-        return getSlots();
+        return stacks.size();
     }
 
 //    @Override
@@ -66,15 +73,16 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public boolean isEmpty() {
-        for (int i = 0; i < getSlots(); i++)
-            if (!getStackInSlot(i).isEmpty())
+        for (int i = 0; i < getContainerSize(); i++)
+            if (!getItem(i).isEmpty()) {
                 return false;
+            }
         return true;
     }
 
     @Override
     public ItemStack getItem(int p_70301_1_) {
-        return getStackInSlot(p_70301_1_);
+        return stacks.get(p_70301_1_);
     }
 
     @Override
@@ -92,7 +100,7 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
     }
 
     @Override
-    protected void onContentsChanged(int slot) {
+    protected void onContentsChanged(int slot, ItemStack pItemStack) {
         listeners.stream().filter(ContentsChangeListener.class::isInstance).map(ContentsChangeListener.class::cast).forEach(l -> l.accept(this, slot));
     }
 
@@ -115,7 +123,7 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
-        return extractItem(slot, Integer.MAX_VALUE, false);
+        return removeItem(slot, Integer.MAX_VALUE);
     }
 
     @Override
@@ -128,13 +136,15 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public void setItem(int slot, ItemStack stack) {
-        setStackInSlot(slot, stack);
+        stacks.set(slot, stack);
     }
 
     @Override
     public void setSize(int size) {
-        if (size < MINSIZE)
+        if (size < MINSIZE) {
             size = MINSIZE;
+        }
+
         super.setSize(size);
     }
 

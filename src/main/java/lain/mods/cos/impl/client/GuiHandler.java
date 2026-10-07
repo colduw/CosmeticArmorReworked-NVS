@@ -30,9 +30,9 @@ public enum GuiHandler {
         if (event.getScreen() instanceof AbstractContainerScreen) {
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) event.getScreen();
 
-            if (lastLeft != screen.getGuiLeft()) {
-                int diffLeft = screen.getGuiLeft() - lastLeft;
-                lastLeft = screen.getGuiLeft();
+            if (lastLeft != screen.getLeftPos()) {
+                int diffLeft = screen.getLeftPos() - lastLeft;
+                lastLeft = screen.getLeftPos();
                 screen.children().stream().filter(IShiftingWidget.class::isInstance).map(IShiftingWidget.class::cast).forEach(b -> b.shiftLeft(diffLeft));
             }
             if (event.getScreen() instanceof CreativeModeInventoryScreen) {
@@ -49,7 +49,7 @@ public enum GuiHandler {
         if (event.getScreen() instanceof AbstractContainerScreen) {
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) event.getScreen();
 
-            lastLeft = screen instanceof CreativeModeInventoryScreen ? 0 : screen.getGuiLeft();
+            lastLeft = screen instanceof CreativeModeInventoryScreen ? 0 : screen.getLeftPos();
             lastInventoryOpen = true;
         }
 
@@ -58,8 +58,8 @@ public enum GuiHandler {
 
             if (!ModConfigs.CosArmorGuiButton_Hidden.get()) {
                 event.addListener(new GuiCosArmorButton(
-                        screen.getGuiLeft() + ModConfigs.CosArmorGuiButton_Left.get()/* 65 */,
-                        screen.getGuiTop() + ModConfigs.CosArmorGuiButton_Top.get()/* 67 */,
+                        screen.getLeftPos() + ModConfigs.CosArmorGuiButton_Left.get()/* 65 */,
+                        screen.getTopPos() + ModConfigs.CosArmorGuiButton_Top.get()/* 67 */,
                         10, 10,
                         event.getScreen() instanceof GuiCosArmorInventory ?
                                 Component.translatable("cos.gui.buttonnormal") :
@@ -79,8 +79,8 @@ public enum GuiHandler {
             }
             if (!ModConfigs.CosArmorToggleButton_Hidden.get()) {
                 event.addListener(new GuiCosArmorToggleButton(
-                        screen.getGuiLeft() + ModConfigs.CosArmorToggleButton_Left.get()/* 59 */,
-                        screen.getGuiTop() + ModConfigs.CosArmorToggleButton_Top.get()/* 72 */,
+                        screen.getLeftPos() + ModConfigs.CosArmorToggleButton_Left.get()/* 59 */,
+                        screen.getTopPos() + ModConfigs.CosArmorToggleButton_Top.get()/* 72 */,
                         5, 5,
                         Component.empty(),
                         PlayerRenderHandler.Disabled ? 1 : 0,
@@ -95,7 +95,7 @@ public enum GuiHandler {
             if (!ModConfigs.CosArmorCreativeGuiButton_Hidden.get()) {
                 event.addListener(new GuiCosArmorButton(
                         /*screen.leftPos + */ModConfigs.CosArmorCreativeGuiButton_Left.get()/* 95 */,
-                        screen.getGuiTop() + ModConfigs.CosArmorCreativeGuiButton_Top.get()/* 38 */,
+                        screen.getTopPos() + ModConfigs.CosArmorCreativeGuiButton_Top.get()/* 38 */,
                         10, 10,
                         Component.translatable("cos.gui.buttoncos"),
                         button -> {

@@ -11,7 +11,7 @@ public class ModPayloads {
     public static void setupPayloads(PayloadRegistrar registrar) {
         registrar.playToClient(PayloadSyncCosArmor.TYPE, PayloadSyncCosArmor.STREAM_CODEC, (p, c) -> {
             c.enqueueWork(() -> {
-                ModObjects.invMan.getCosArmorInventoryClient(p.uuid()).setStackInSlot(p.slot(), p.itemCosArmor());
+                ModObjects.invMan.getCosArmorInventoryClient(p.uuid()).setItem(p.slot(), p.itemCosArmor());
                 ModObjects.invMan.getCosArmorInventoryClient(p.uuid()).setSkinArmor(p.slot(), p.isSkinArmor());
             });
         }).playToServer(PayloadSetSkinArmor.TYPE, PayloadSetSkinArmor.STREAM_CODEC, (p, c) -> {

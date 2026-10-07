@@ -50,24 +50,23 @@ import java.util.UUID;
 public class InventoryManager {
 
     protected static final InventoryCosArmor Dummy = new InventoryCosArmor() {
-
         @Override
         @Nonnull
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        public ItemStack getItem(int slot) {
             return ItemStack.EMPTY;
         }
 
-        @Override
-        @Nonnull
-        public ItemStack getStackInSlot(int slot) {
-            return ItemStack.EMPTY;
-        }
+        // @Override
+        // @Nonnull
+        // public ItemStack getStackInSlot(int slot) {
+        //     return ItemStack.EMPTY;
+        // }
 
-        @Override
-        @Nonnull
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            return stack;
-        }
+        // @Override
+        // @Nonnull
+        // public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        //     return stack;
+        // }
 
         @Override
         public boolean isHidden(String modid, String identifier) {
@@ -80,7 +79,7 @@ public class InventoryManager {
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack pItemStack) {
         }
 
         @Override
@@ -97,7 +96,7 @@ public class InventoryManager {
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setItem(int slot, @Nonnull ItemStack stack) {
         }
 
         @Override
@@ -160,8 +159,8 @@ public class InventoryManager {
                 InventoryCosArmor inv = getCosArmorInventory(event.getEntity().getUUID());
                 if (NeoForge.EVENT_BUS.post(new CosArmorDeathDrops((Player) event.getEntity(), inv)).isCanceled())
                     return;
-                for (int i = 0; i < inv.getSlots(); i++) {
-                    ItemStack stack = inv.getStackInSlot(i).copy();
+                for (int i = 0; i < inv.getContainerSize(); i++) {
+                    ItemStack stack = inv.getItem(i).copy();
                     if (stack.isEmpty())
                         continue;
 
@@ -174,7 +173,7 @@ public class InventoryManager {
                         event.getDrops().add(entity);
                     }
 
-                    inv.setStackInSlot(i, ItemStack.EMPTY);
+                    inv.setItem(i, ItemStack.EMPTY);
                 }
             }
         }
@@ -191,7 +190,7 @@ public class InventoryManager {
                     continue;
                 UUID uuid = other.getUUID();
                 InventoryCosArmor inv = getCosArmorInventory(uuid);
-                for (int i = 0; i < inv.getSlots(); i++)
+                for (int i = 0; i < inv.getContainerSize(); i++)
                     PacketDistributor.sendToPlayer(player, new PayloadSyncCosArmor(uuid, inv, i));
                 inv.forEachHidden((modid, identifier) -> PacketDistributor.sendToPlayer(player, new PayloadSyncHiddenFlags(uuid, inv, modid, identifier)));
             }
@@ -214,8 +213,8 @@ public class InventoryManager {
             int count = 0;
             ServerPlayer player = s.getSource().getPlayerOrException();
             InventoryCosArmor inv = getCosArmorInventory(player.getUUID());
-            for (int i = 0; i < inv.getSlots(); i++)
-                count += inv.extractItem(i, Integer.MAX_VALUE, false).getCount();
+            for (int i = 0; i < inv.getContainerSize(); i++)
+                count += inv.removeItem(i, Integer.MAX_VALUE).getCount();
 
             final int result = count;
             s.getSource().sendSuccess(() -> Component.translatable("cos.command.clearcosarmor.success.single", result, player.getDisplayName()), true);
@@ -225,8 +224,8 @@ public class InventoryManager {
             Collection<ServerPlayer> players = EntityArgument.getPlayers(s, "targets");
             for (ServerPlayer player : players) {
                 InventoryCosArmor inv = getCosArmorInventory(player.getUUID());
-                for (int i = 0; i < inv.getSlots(); i++)
-                    count += inv.extractItem(i, Integer.MAX_VALUE, false).getCount();
+                for (int i = 0; i < inv.getContainerSize(); i++)
+                    count += inv.removeItem(i, Integer.MAX_VALUE).getCount();
             }
 
             final int result = count;
@@ -244,9 +243,9 @@ public class InventoryManager {
                 ServerPlayer player = s.getSource().getPlayerOrException();
                 InventoryCosArmor inv = getCosArmorInventory(player.getUUID());
                 ItemStack stack1 = player.getItemBySlot(EquipmentSlot.MAINHAND);
-                ItemStack stack2 = inv.getStackInSlot(3);
+                ItemStack stack2 = inv.getItem(3);
                 player.setItemSlot(EquipmentSlot.MAINHAND, stack2);
-                inv.setStackInSlot(3, stack1);
+                inv.setItem(3, stack1);
                 return 0;
             }));
         }

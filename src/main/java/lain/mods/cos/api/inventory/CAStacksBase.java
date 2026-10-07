@@ -1,10 +1,11 @@
 package lain.mods.cos.api.inventory;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueOutput.ValueOutputList;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  * Changes made to server side CAStacks will be sync to the clients. <br>
  * Do not make changes to client side CAStacks, it is not expected, and can cause problems. <br>
  * <br>
- * This class extends {@link ItemStackHandler}. <br>
+ * This class extends {@link ItemStacksResourceHandler}. <br>
  * <br>
  * CosmeticArmorReworked uses 4 slots. <br>
  * Slot 0-3 are {@link net.minecraft.world.entity.EquipmentSlot#FEET FEET}, {@link net.minecraft.world.entity.EquipmentSlot#LEGS LEGS}, {@link net.minecraft.world.entity.EquipmentSlot#CHEST CHEST}, {@link net.minecraft.world.entity.EquipmentSlot#HEAD HEAD}. <br>
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * For toggling visibilities of other mods, use these methods: <br>
  * {@link #setHidden(String, String, boolean) setHidden}, {@link #isHidden(String, String) isHidden}, {@link #forEachHidden(BiConsumer) forEachHidden}.
  */
-public class CAStacksBase extends ItemStackHandler {
+public class CAStacksBase extends ItemStacksResourceHandler {
 
     protected final Map<String, Set<String>> hidden = new HashMap<>();
 
@@ -67,6 +68,8 @@ public class CAStacksBase extends ItemStackHandler {
         onLoad();
     }
 
+    protected void onLoad() {}
+
     /**
      * Iterates through all set hidden other mods' things.
      *
@@ -90,7 +93,10 @@ public class CAStacksBase extends ItemStackHandler {
     }
 
     public boolean isSkinArmor(int slot) {
-        validateSlotIndex(slot);
+        if (slot < 0 || slot >= stacks.size()) {
+            throw new IndexOutOfBoundsException("slot is out of bounds in isSkinArmor");
+        }
+
         return isSkinArmor[slot];
     }
 
@@ -134,18 +140,22 @@ public class CAStacksBase extends ItemStackHandler {
             return hidden.getOrDefault(modid, Collections.emptySet()).remove(identifier);
     }
 
-    @Override
     public void setSize(int size) {
-        super.setSize(size);
+        setStacks(NonNullList.withSize(size, ItemStack.EMPTY));
         isSkinArmor = new boolean[stacks.size()];
     }
 
     public void setSkinArmor(int slot, boolean enabled) {
-        validateSlotIndex(slot);
-        if (isSkinArmor[slot] == enabled)
+        if (slot < 0 || slot >= stacks.size()) {
             return;
-        isSkinArmor[slot] = enabled;
-        onContentsChanged(slot);
-    }
+        }
 
+        if (isSkinArmor[slot] == enabled) {
+            return;
+        }
+
+        isSkinArmor[slot] = enabled;
+        
+        onContentsChanged(slot, getResource(slot).toStack(getAmountAsInt(slot)));
+    }
 }

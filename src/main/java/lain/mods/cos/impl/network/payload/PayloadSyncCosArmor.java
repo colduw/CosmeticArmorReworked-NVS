@@ -22,7 +22,7 @@ public record PayloadSyncCosArmor(UUID uuid, int slot, boolean isSkinArmor,
                 uuid,
                 slot,
                 inventory.isSkinArmor(slot),
-                inventory.getStackInSlot(slot)
+                inventory.getSlot(slot).get()
         );
     }
 
