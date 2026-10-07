@@ -158,7 +158,7 @@ public class ContainerCosArmor extends AbstractCraftingMenu {
         super.removed(playerIn);
 
         resultSlots.clearContent();
-        if (!playerIn.level().isClientSide)
+        if (!playerIn.level().isClientSide())
             clearContainer(playerIn, craftSlots);
     }
 

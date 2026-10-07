@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.CraftingRecipeBookComponent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -103,12 +104,12 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int buttonId) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (buttonClicked) {
             buttonClicked = false;
             return true;
         } else {
-            return super.mouseReleased(mouseX, mouseY, buttonId);
+            return super.mouseReleased(event);
         }
     }
 
