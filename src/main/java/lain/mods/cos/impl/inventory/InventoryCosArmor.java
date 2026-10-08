@@ -48,7 +48,13 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
             return ItemStack.EMPTY;
         }
 
-        return stack.split(num);
+        ItemStack splitStack = stack.split(num);
+
+        if (!splitStack.isEmpty()) {
+            onContentsChanged(slot, stack);
+        }
+
+        return splitStack;
     }
 
     @Override
@@ -136,7 +142,7 @@ public class InventoryCosArmor extends CAStacksBase implements Container, MenuPr
 
     @Override
     public void setItem(int slot, ItemStack stack) {
-        stacks.set(slot, stack);
+        onContentsChanged(slot, stacks.set(slot, stack));
     }
 
     @Override
