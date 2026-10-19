@@ -65,7 +65,7 @@ public enum GuiHandler {
                                 InventoryScreen newGui = new InventoryScreen(screen.getMinecraft().player);
                                 InventoryScreenAccess.setXMouse(newGui, ((GuiCosArmorInventory) screen).oldMouseX);
                                 InventoryScreenAccess.setYMouse(newGui, ((GuiCosArmorInventory) screen).oldMouseY);
-                                screen.getMinecraft().setScreen(newGui);
+                                screen.getMinecraft().gui.setScreen(newGui);
                                 ModObjects.network.sendToServer(new PacketOpenNormalInventory());
                             } else {
                                 ModObjects.network.sendToServer(new PacketOpenCosArmorInventory());
