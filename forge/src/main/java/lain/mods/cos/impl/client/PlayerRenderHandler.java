@@ -11,7 +11,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -69,7 +68,7 @@ public enum PlayerRenderHandler {
     }
 
     public void registerEvents() {
-        MinecraftForge.EVENT_BUS.addListener(this::handleLoggedOut);
+        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(this::handleLoggedOut);
     }
 
     private void restoreItems(Deque<Runnable> queue) {

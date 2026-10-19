@@ -10,6 +10,7 @@ import lain.mods.cos.impl.network.packet.*;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -27,12 +28,15 @@ public class ForgeCosmeticArmorReworked {
     public static final RegistryObject<MenuType<ContainerCosArmor>> typeContainerCosArmor = MENU.register("inventorycosarmor", () -> IForgeMenuType.create(ModObjects.invMan::createContainerClient));
 
     public ForgeCosmeticArmorReworked(FMLJavaModLoadingContext context) {
-        MENU.register(context.getModEventBus());
-        context.getModEventBus().addListener(this::setup);
-        context.getModEventBus().addListener(this::setupClient);
+        BusGroup busGroup = context.getModBusGroup();
+        MENU.register(busGroup);
+
+        FMLCommonSetupEvent.getBus(busGroup).addListener(this::setup);
+        FMLClientSetupEvent.getBus(busGroup).addListener(this::setupClient);
         if (FMLEnvironment.dist.isClient()) {
-            context.getModEventBus().addListener(this::setupKeyMappings);
+            RegisterKeyMappingsEvent.getBus(busGroup).addListener(this::setupKeyMappings);
         }
+        
         ModConfigs.registerConfigs(context);
     }
 

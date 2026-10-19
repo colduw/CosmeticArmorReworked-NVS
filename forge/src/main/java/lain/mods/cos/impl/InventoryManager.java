@@ -23,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -148,9 +147,9 @@ public class InventoryManager {
 
     private void handlePlayerDrops(LivingDropsEvent event) {
         if (event.getEntity() instanceof Player) {
-            if (event.getEntity().isEffectiveAi() && !((ServerLevel) event.getEntity().getCommandSenderWorld()).getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ModConfigs.CosArmorKeepThroughDeath.get()) {
+            if (event.getEntity().isEffectiveAi() && !((ServerLevel) event.getEntity().level()).getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ModConfigs.CosArmorKeepThroughDeath.get()) {
                 InventoryCosArmor inv = getCosArmorInventory(event.getEntity().getUUID());
-                if (MinecraftForge.EVENT_BUS.post(new CosArmorDeathDrops((Player) event.getEntity(), inv)))
+                if (CosArmorDeathDrops.BUS.post(new CosArmorDeathDrops((Player) event.getEntity(), inv)))
                     return;
                 for (int i = 0; i < inv.getSlots(); i++) {
                     ItemStack stack = inv.getStackInSlot(i).copy();
@@ -161,7 +160,7 @@ public class InventoryManager {
                     float fY = RANDOM.nextFloat() * 0.75F;
                     float fZ = RANDOM.nextFloat() * 0.75F + 0.125F;
                     while (!stack.isEmpty()) {
-                        ItemEntity entity = new ItemEntity(event.getEntity().getCommandSenderWorld(), event.getEntity().getX() + (double) fX, event.getEntity().getY() + (double) fY, event.getEntity().getZ() + (double) fZ, stack.split(RANDOM.nextInt(21) + 10));
+                        ItemEntity entity = new ItemEntity(event.getEntity().level(), event.getEntity().getX() + (double) fX, event.getEntity().getY() + (double) fY, event.getEntity().getZ() + (double) fZ, stack.split(RANDOM.nextInt(21) + 10));
                         entity.setDeltaMovement(RANDOM.nextGaussian() * (double) 0.05F, RANDOM.nextGaussian() * (double) 0.05F + (double) 0.2F, RANDOM.nextGaussian() * (double) 0.05F);
                         event.getDrops().add(entity);
                     }
@@ -289,12 +288,12 @@ public class InventoryManager {
     }
 
     public void registerEvents() {
-        MinecraftForge.EVENT_BUS.addListener(this::handlePlayerDrops);
-        MinecraftForge.EVENT_BUS.addListener(this::handlePlayerLoggedIn);
-        MinecraftForge.EVENT_BUS.addListener(this::handlePlayerLoggedOut);
-        MinecraftForge.EVENT_BUS.addListener(this::handleSaveToFile);
-        MinecraftForge.EVENT_BUS.addListener(this::handleRegisterCommands);
-        MinecraftForge.EVENT_BUS.addListener(this::handleServerStopping);
+        LivingDropsEvent.BUS.addListener(this::handlePlayerDrops);
+        PlayerLoggedInEvent.BUS.addListener(this::handlePlayerLoggedIn);
+        PlayerLoggedOutEvent.BUS.addListener(this::handlePlayerLoggedOut);
+        PlayerEvent.SaveToFile.BUS.addListener(this::handleSaveToFile);
+        RegisterCommandsEvent.BUS.addListener(this::handleRegisterCommands);
+        ServerStoppingEvent.BUS.addListener(this::handleServerStopping);
     }
 
     public void registerEventsClient() {

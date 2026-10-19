@@ -11,7 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public class InventoryManagerClient extends InventoryManager {
 
     @Override
     public void registerEventsClient() {
-        MinecraftForge.EVENT_BUS.addListener(this::handleLoggedOut);
+        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(this::handleLoggedOut);
     }
 
 }

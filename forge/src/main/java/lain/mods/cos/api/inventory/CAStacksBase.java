@@ -3,6 +3,9 @@ package lain.mods.cos.api.inventory;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -46,8 +49,8 @@ public class CAStacksBase extends ItemStackHandler {
                 tagList.getCompound(i).ifPresent(itemTags -> {
                     itemTags.getInt("Slot").ifPresent(slot -> {
                         if (slot >= 0 && slot < stacks.size()) {
-                            if (itemTags.contains("id"))
-                                ItemStack.parse(lookup, itemTags).ifPresent(stack -> stacks.set(slot, stack));
+                            itemTags.read("cosmeticArmorStack", ItemStack.CODEC).ifPresent(stack -> stacks.set(slot, stack));
+
                             itemTags.getBoolean("isSkinArmor").ifPresent(b -> isSkinArmor[slot] = b);
                         }
                     });
@@ -99,10 +102,15 @@ public class CAStacksBase extends ItemStackHandler {
             if (!stacks.get(i).isEmpty() || isSkinArmor[i]) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                if (!stacks.get(i).isEmpty())
-                    itemTag = (CompoundTag) stacks.get(i).save(lookup, itemTag);
-                if (isSkinArmor[i])
+
+                if (!stacks.get(i).isEmpty()) {
+                    itemTag.store("cosmeticArmorStack", ItemStack.CODEC, stacks.get(i));
+                } 
+
+                if (isSkinArmor[i]) {
                     itemTag.putBoolean("isSkinArmor", true);
+                }
+
                 nbtTagList.add(itemTag);
             }
         }
@@ -142,5 +150,4 @@ public class CAStacksBase extends ItemStackHandler {
         isSkinArmor[slot] = enabled;
         onContentsChanged(slot);
     }
-
 }

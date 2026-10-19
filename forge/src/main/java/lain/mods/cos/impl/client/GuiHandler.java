@@ -12,12 +12,9 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Set;
-
 public enum GuiHandler {
-
     INSTANCE;
 
     public static final Set<Integer> ButtonIds = ImmutableSet.of(76, 77);
@@ -108,8 +105,8 @@ public enum GuiHandler {
     }
 
     public void registerEvents() {
-        MinecraftForge.EVENT_BUS.addListener(this::handleGuiDrawPre);
-        MinecraftForge.EVENT_BUS.addListener(this::handleGuiInitPost);
+        ScreenEvent.Render.Pre.BUS.addListener(this::handleGuiDrawPre);
+        ScreenEvent.Init.Post.BUS.addListener(this::handleGuiInitPost);
         setupGuiFactory();
     }
 
