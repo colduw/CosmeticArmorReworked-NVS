@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -229,7 +230,7 @@ public class ContainerCosArmor extends AbstractCraftingMenu {
 
             slot.onTake(player, stack1);
             if (slotIndex == 0)
-                player.drop(stack1, false);
+                player.drop(stack1, false, Prediction.SERVER_ONLY);
         }
 
         return stack;
