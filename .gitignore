@@ -8,3 +8,8 @@
 /.idea/
 /*.iml
 /logs/
+runs/
+.vscode/
+*/build/
+*/.gradle/
+*/bin/

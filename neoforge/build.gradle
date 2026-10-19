@@ -8,11 +8,15 @@ plugins {
 version = mod_version
 group = mod_group_id
 
-repositories {
+base {
+    archivesName = mod_id + "-neoforge"
 }
 
-base {
-    archivesName = mod_id
+subsystems {
+    parchment {
+        minecraftVersion = mappings_mc_version
+        mappingsVersion = mappings_version
+    }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
