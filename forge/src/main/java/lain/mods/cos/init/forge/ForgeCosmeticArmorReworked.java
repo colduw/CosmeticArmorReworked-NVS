@@ -34,7 +34,7 @@ public class ForgeCosmeticArmorReworked {
         FMLCommonSetupEvent.getBus(busGroup).addListener(this::setup);
         FMLClientSetupEvent.getBus(busGroup).addListener(this::setupClient);
         if (FMLEnvironment.dist.isClient()) {
-            RegisterKeyMappingsEvent.getBus(busGroup).addListener(this::setupKeyMappings);
+            RegisterKeyMappingsEvent.BUS.addListener(this::setupKeyMappings);
         }
         
         ModConfigs.registerConfigs(context);

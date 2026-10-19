@@ -14,7 +14,7 @@ public enum KeyHandler {
 
     INSTANCE;
 
-    public KeyMapping keyOpenCosArmorInventory = new KeyMapping("cos.key.opencosarmorinventory", InputConstants.UNKNOWN.getValue(), "key.categories.inventory");
+    public KeyMapping keyOpenCosArmorInventory = new KeyMapping("cos.key.opencosarmorinventory", InputConstants.UNKNOWN.getValue(), KeyMapping.Category.INVENTORY);
 
     private void handleClientTick(TickEvent.ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
