@@ -122,7 +122,7 @@ public class InventoryManager {
     });
 
     public static boolean checkIdentifier(String modid, String identifier) {
-        if (modid == null || modid.isEmpty() || identifier == null || identifier.isEmpty() || !ModList.get().isLoaded(modid))
+        if (modid == null || modid.isEmpty() || identifier == null || identifier.isEmpty() || !ModList.isLoaded(modid))
             return false;
 
         return false;

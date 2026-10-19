@@ -135,7 +135,7 @@ public class ContainerCosArmor extends AbstractCraftingMenu {
             RecipeHolder<CraftingRecipe> recipeholder = optional.get();
             CraftingRecipe craftingrecipe = recipeholder.value();
             if (p_150551_.setRecipeUsed(serverplayer, recipeholder)) {
-                ItemStack itemstack1 = craftingrecipe.assemble(craftinginput, p_379963_.registryAccess());
+                ItemStack itemstack1 = craftingrecipe.assemble(craftinginput);
                 if (itemstack1.isItemEnabled(p_379963_.enabledFeatures())) {
                     itemstack = itemstack1;
                 }
