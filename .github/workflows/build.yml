@@ -36,8 +36,10 @@ jobs:
       uses: softprops/action-gh-release@v3
       with:
         tag_name: "1.21.9-${{ steps.epoch_timestamp.outputs.timestamp }}"
-        name: "1.21.9 NeoForge Release"
+        name: "1.21.9 (Neo)Forge Release"
         draft: true
         prerelease: false
-        files: ./build/libs/*.jar
+        files: |
+          ./neoforge/build/libs/*.jar
+          ./forge/build/libs/*.jar
         fail_on_unmatched_files: true
