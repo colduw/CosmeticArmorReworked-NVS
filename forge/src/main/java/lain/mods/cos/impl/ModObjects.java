@@ -4,7 +4,7 @@ import lain.mods.cos.impl.client.InventoryManagerClient;
 import lain.mods.cos.impl.inventory.ContainerCosArmor;
 import lain.mods.cos.impl.network.NetworkManager;
 import lain.mods.cos.init.forge.ForgeCosmeticArmorReworked;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,7 @@ public class ModObjects {
 
     public static final Logger logger = LogManager.getLogger(ForgeCosmeticArmorReworked.class);
     public static final InventoryManager invMan = FMLEnvironment.dist.isClient() ? new InventoryManagerClient() : new InventoryManager();
-    public static final NetworkManager network = new NetworkManager(ResourceLocation.parse("cosmeticarmorreworked:main"), 4);
+    public static final NetworkManager network = new NetworkManager(Identifier.parse("cosmeticarmorreworked:main"), 4);
 
     public static MenuType<ContainerCosArmor> getTypeContainerCosArmor() {
         return ForgeCosmeticArmorReworked.typeContainerCosArmor.get();

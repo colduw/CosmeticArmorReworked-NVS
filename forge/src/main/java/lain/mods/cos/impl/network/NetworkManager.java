@@ -2,8 +2,8 @@ package lain.mods.cos.impl.network;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -18,7 +18,7 @@ public class NetworkManager {
 
     protected final SimpleChannel channel;
 
-    public NetworkManager(ResourceLocation name, int version) {
+    public NetworkManager(Identifier name, int version) {
         if (name == null || version < 0)
             throw new IllegalArgumentException();
         channel = ChannelBuilder.named(name).networkProtocolVersion(version).acceptedVersions(Channel.VersionTest.exact(version)).simpleChannel();

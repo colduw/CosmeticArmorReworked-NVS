@@ -16,12 +16,12 @@ import net.minecraft.client.gui.screens.recipebook.CraftingRecipeBookComponent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosArmor> {
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("cosmeticarmorreworked", "textures/gui/cosarmorinventory.png");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("cosmeticarmorreworked", "textures/gui/cosarmorinventory.png");
     private final EffectsInInventory effects;
     public float oldMouseX;
     public float oldMouseY;
@@ -73,7 +73,7 @@ public class GuiCosArmorInventory extends AbstractRecipeBookScreen<ContainerCosA
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
-        effects.renderEffects(graphics, mouseX, mouseY);
+        effects.render(graphics, mouseX, mouseY);
         oldMouseX = (float) mouseX;
         oldMouseY = (float) mouseY;
     }
